@@ -1,0 +1,234 @@
+create data base student_management_system;
+USE student_management_system;
+
+create table student
+  (student_id int auto_increment primary key,
+  student_name varchar 
+  (50),student_email varchar(100),
+   phone_no varcher (20) ,
+   student_address varchar (100));
+
+   INSERT INTO STUDENT (student_id, student_name, student_email , phone_no ,student_address) valus;
+   (101, "saviour", "saviour@gmail.com","9887566307", " chennai")
+   (102, "sangeetha",  "sangeetha@gmail.com","9865022289" ,"madurai")
+   (103, "roshini", "roshini@gmail.com", "9856732465" ,"coimbator")
+   (104, "ravi", "ravi@gmail.com","9880746523", "chennai")
+   (105, "selvam"  ,"selvam@gmail,com","9884538865" "madurai")
+   (106, "oshein", "oshein@gmail.com" ,"8905602304" "chennai")
+   ( 107, "forum", "forum@gmail.com", "9555546666" ,"chennai")
+   (108, "aanaya", "aanaya@gmail.com","8999956666", "coimbator")
+   (109, "delwen" , ,"delwen@gmail.com","8999978888", "chennai")
+   ( 110,"shiva", , "shiva@gmail.com","9888058965", "madurai") );
+
+   create table courses
+     (course_id INT AUTO_INCREMENT PRIMARY Key ,
+     course_name varchar(50),
+     course_duration varchar(100)
+     course_description varchar(200));
+
+
+    insert into course (course_id, course_name, course_description,cours_duration)values
+     (101, ,"data analytics", "excl, sql, "5)
+    ( 102, "web developer" "html,js", "7")
+    ( 103,"java programming","java,fundamendals","10")
+    ( 104," data analytics","excle,sql", "5")
+     (105, "data analytics","excle,sql", "5")
+    ( 106,"web developer","html, js"," 7")
+    ( 107,"java programming","java,fundamendals", '10')
+    ( 108,"data analytics","excle,sql",' 5')
+    ( 109,"web developer","html,js", 7)
+    ( 110,"data analytics","excle,sql"," 5"));
+
+
+    create table enrollment 
+      (enrollment_id int primary key auto_increment,
+      student_id int,
+      courses_id int,
+      enrollment_date date,
+      foreign key (student_id) references students(student_id)
+      foreign key (courses_id) referencs courses(courses_id)
+      );
+      
+
+
+      insert into enrollment (student_id, courses_id,enrollment_data);values
+      (101,101,08-11-2025)
+      (102,102,10-12-2025)
+      (103,103,08-09-2025)
+      (104,104,05-10-2025)
+      (105,105,04-10-2025)
+      (106,106,05-09-2025)
+      (107,107,01-09-2025)
+      (108,108,08-09-2025)
+      (109,109,10-12-2025)
+      9110,110,05-09-2025)
+      );
+
+      create table grades 
+      (grades_id int primary key auto_increment,
+      enrollment_id int,
+     student_grades varchar(20),
+     student_remarks varchar(20)
+     foregin key (enrollment_id) references enrollment (enrollment_id)
+     );
+
+     insert into grades (enrollment_id, student_grades, student_remarks)values
+    ( 101, A+, "Excellent performance")
+    ( 102, B ,"'Very good effort'");
+    ( 103, A , "'Very good effort'");
+    ( 104, A+, "'Excellent performance'")
+    ( 105, B+,"'Good understanding'")
+   (  106, A, "'Very good effort");
+    ( 107, A, "'Very good effort'");
+    ( 108, B+ "'Good understanding")
+    ( 109, A+ "Excellent performance'")
+    ( 110, B+ "'Good understanding")
+    );
+
+
+    create table instructors
+     ( instructor_id INT AUTO_INCREMENT PRIMARY KEY,
+       instructor_name VARCHAR(50),
+       phone_number VARCHAR(15),
+       instructor_specialization VARCHAR(100)
+       instructor_roll varchar(50)
+       );
+
+
+       insert into instructors ( instructor_id, instructor_name, instructor_specialization, instructor_roll)values
+      ( 101, "babu" ,"data ananlytics", "trainer")
+      ( 102, "priya","web developer" , "trainer")
+      ( 103," janifer"," java programming","trainer")
+      ( 104, "babu"" data analytics","trainer")
+       (105, "babu"  " data analytics","trainer")
+      ( 106, "priya"  "web developer","trainer")
+      ( 107, "janifer" " java programming","trainer")
+       108, "babu" " data analytics","trainer")
+      ( 109, "priya"  " web developer","trainer")
+      ( 110, "babu"  "data analytics","trainer")
+
+      );
+       
+      --(using joins)
+
+      SELECT s.student_id, s.first_name, s.last_name, c.course_name, e.enrollment_date
+       FROM enrollment e
+       JOIN student s ON e.student_id = s.student_id
+       JOIN course c ON e.course_id = c.course_id
+       left joins
+       SELECT s.student_id, s.first_name, s.last_name, c.course_name, e.enrollment_date
+       FROM student s
+       LEFT JOIN enrollment e ON s.student_id = e.student_id
+         LEFT JOIN course c ON e.course_id = c.course_id;
+
+         SELECT c.course_id, c.course_name, i.first_name, i.last_name
+         FROM course c
+        LEFT JOIN instructor i ON c.instructor_id = i.instructor_id
+
+
+        --(using view)
+        CREATE VIEW student_course_grade AS
+SELECT s.student_id, CONCAT(s.first_name,') AS student_name,
+       c.course_id, c.course_name,
+       e.enrollment_id, e.enrollment_date,
+       g.grade, g.remarks
+JOIN student s ON e.student_id = s.student_id
+JOIN course c ON e.course_id = c.course_id
+LEFT JOIN grades g ON e.enrollment_id = g.enrollment_id
+SELECT * FROM student_course_graders
+WHERE student_grades IS NULL;
+DROP VIEW student_course_grade;
+
+
+
+      --(using trigger)
+      DELIMITER $$
+CREATE TRIGGER trg_enrollment_after_insert
+AFTER INSERT ON enrollment
+FOR EACH ROW
+BEGIN
+  INSERT INTO grades (enrollment_id, grade, remarks)
+  VALUES (NEW.enrollment_id, NULL, 'Grade pending');
+END$$
+DELIMITER ;
+
+
+
+   --(using store producer)
+    DELIMITER $$
+CREATE PROCEDURE sp_student_report (IN p_student_id INT)
+BEGIN
+  SELECT s.student_id, CONCAT(s.first_name,' ',s.last_name) AS student_name,
+         c.course_name, e.enrollment_date, e.status, g.grade, g.remarks
+  FROM student s
+  JOIN enrollment e ON s.student_id = e.student_id
+  JOIN course c ON e.course_id = c.course_id
+  LEFT JOIN grades g ON e.enrollment_id = g.enrollment_id
+  WHERE s.student_id = p_student_id;
+END $$
+DELIMITER ;
+
+DROP PROCEDURE enroll_student;
+DROP PROCEDURE student_report;
+
+
+ --(using sub query)
+ SELECT student_id, first_name, last_name
+FROM student
+WHERE student_id NOT IN (
+  SELECT student_id FROM enrollment
+);
+SELECT s.student_id, s.first_name, s.last_name,
+  (SELECT MAX(e.enrollment_date)
+   FROM enrollment e
+   WHERE e.student_id = s.student_id) AS latest_enrollment
+FROM student s;
+);
+
+
+
+
+
+   
+
+
+
+
+
+
+  
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+       
+
+
+    
+
+    
+     
+      
+      
+
+
+
+  
+     
+     
+   
+              
